@@ -1,0 +1,133 @@
+<script>
+Ext.onReady(function() {
+/*
+var jsonstore = new Ext.data.JsonStore({
+    data: [
+        { id: 1, name: '张三', sex: '0', birthday: '2001/01/01' },
+        { id: 2, name: '李四', sex: '1', birthday: '2002/01/01' },
+        { id: 3, name: '王五', sex: '0', birthday: '2003/01/01' }
+    ],
+    fields: ['id', 'name', 'sex', { name: 'birthday', type: 'date', dateformat: 'Y/m/d'}]
+});
+//复选框列
+var sm = new Ext.grid.CheckboxSelectionModel();
+//渲染性别
+var sexrender = function (value, metaData, record, rowIndex, cloIndex, store) {
+    if (value == '0') {
+        metaData.attr = 'style="font-weight:bold";'
+        return '男';
+    }
+    else
+        return '女';
+}
+//定义列
+var column = new Ext.grid.ColumnModel({
+    columns: [
+            sm,
+            { header: '编号', dataIndex: 'id', sortable: true },
+            { header: '姓名', dataIndex: 'name' },
+            { header: '性别', dataIndex: 'sex', renderer: sexrender },
+            { header: '出生日期', dataIndex: 'birthday', renderer: Ext.util.Format.dateRenderer('Y-m-d') }
+    ]
+});
+//添加按钮
+var tbtn = new Ext.Toolbar.Button({
+    text: '查看选中项',
+    listeners: {
+        'click': function () {
+            var row = grid.getSelectionModel().getSelections();
+            for (var i = 0; i < row.length; i++) {
+                alert(row[i].get('id'));
+            }
+        }
+    }
+});
+//分页控件
+var pager = new Ext.PagingToolbar({
+    pageSize: 2,
+    store: jsonstore,
+    listeners: {
+        "beforechange": function (bbar, params) {
+            var grid = bbar.ownerCt;
+            var store = grid.getStore();
+            var start = params.start;
+            var limit = params.limit;
+            alert(store.getCount());
+            return false;
+        }
+    }
+});
+//列表
+var grid = new Ext.grid.GridPanel({
+    sm: sm,
+    title: 'GridPanel',
+    height: 200,
+    store: jsonstore,
+    tbar: [tbtn],
+    bbar: pager,
+    colModel: column
+});
+var tabpanel=Ext.create('Ext.tab.Panel', {
+    width: 400,
+    height: 400,
+    items: [grid]
+});
+*/
+var itemsPerPage=10
+var recordstore = Ext.create('Ext.data.Store', {
+    autoLoad: false,
+    fields:['code'],
+    pageSize: itemsPerPage,  
+    proxy: {
+        type: 'ajax',
+        url: 'test.json',   
+        	reader: {
+        		type: 'json',
+        		root: 'gridData',
+            	totalProperty: 'totalCount'
+        	}
+    	}  
+	});
+recordstore.load({
+	params:{
+    		start:0,
+        	limit: itemsPerPage,
+    }
+});
+var grid=Ext.create('Ext.grid.Panel', {
+    title: 'record',
+    store: recordstore,
+    columns: [
+        {
+            xtype: 'rownumberer',
+            width: 60,
+            sortable: false,
+            header: 'index', 
+            align: 'center'
+      	},
+		{ header: 'code',  dataIndex: 'code' , flex: 1, align: 'center' }
+	],
+    width: 400,
+    height: 125,
+    selType: 'rowmodel',
+    dockedItems: [{
+        xtype: 'pagingtoolbar',
+        store: recordstore,    
+        dock: 'bottom',
+        displayInfo: true, 
+        items:[
+    		'-',
+    	]    
+	}],
+});
+var tabpanel=Ext.create('Ext.tab.Panel', {
+    width: 400,
+    height: 400,
+    items: [grid]
+});
+var work_space = Ext.getCmp('center');
+work_space.removeAll();
+work_space.add(tabpanel);
+work_space.doLayout();
+})
+</script>

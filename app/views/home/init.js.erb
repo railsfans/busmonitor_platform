@@ -1,0 +1,13 @@
+var mainpanel =new Ext.create('Ext.panel.Panel', {
+        width: 150,
+        height: 150,
+        border: false,
+        frame: false,
+        layout: 'fit',
+    	bodyStyle: "background: #fff url('../images/body.jpg') no-repeat 0px 0px;background-position: 50% 90%;",
+        html: '<div class="title"><span class="style1">龙湾区公安分局</span><span><li class="style2">征兵政审系统</li><li class="style3">Conscript Political Examination System</li></span></div>'
+    });
+var work_space = Ext.getCmp('center');
+work_space.removeAll();
+work_space.add(mainpanel);
+work_space.doLayout();    

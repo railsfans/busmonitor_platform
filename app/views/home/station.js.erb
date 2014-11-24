@@ -1,0 +1,109 @@
+Ext.getCmp('left').items.items[1].expand();	
+var itemsPerPage=30
+var recordstore = Ext.create('Ext.data.Store', {
+    autoLoad: false,
+    fields:['cityname','station_name','station_num','online_state','online_time','offline_time','offline_count','update_percent','update_speed','sync_state','service_state'],
+    pageSize: itemsPerPage,  
+    proxy: {
+        type: 'ajax',
+        url: 'station.json',   
+        	reader: {
+        		type: 'json',
+        		root: 'gridData',
+            	totalProperty: 'totalCount'
+        	}
+    	} ,
+	groupField: 'cityname' 
+	});
+recordstore.load({
+	params:{
+    		start:0,
+        	limit: itemsPerPage,
+    }
+});
+ function search(type)
+{
+	if(type=="search"){
+        	Ext.getCmp("clear").enable();
+        	recordstore.load({
+         	params:{
+            	start:0,
+            	limit: itemsPerPage,
+             	keyname : Ext.getCmp("search_text").getValue(),
+                        	}
+        		});
+	}else if(type=="clear"){
+        Ext.getCmp("clear").disable();
+        Ext.getCmp("search_text").setValue('');
+        recordstore.load({
+        		params:{
+            	start:0,
+             	limit: itemsPerPage,
+                        }
+       		 });
+        }
+}
+function percent_fomate(value){
+    return value+"%";
+};
+function speed_fomate(value){
+    return value+"kb";
+};
+function is_real_fomate(val){
+    if (parseInt(val)) {
+        return "<div>"+'<%= t('is_real') %>'+"</div>";
+    }else{
+        return "<div class='color-gray'>"+'<%= t('not_real') %>'+"</div>";
+    }
+};
+function online_fomate(val){
+    if (parseInt(val)) {
+        return "<div>"+'<%= t('online') %>'+"</div>";
+    }else{
+        return "<div class='color-gray'>"+'<%= t('offline') %>'+"</div>";
+    }
+};
+var grid=Ext.create('Ext.grid.Panel', {
+    title: '<%= t('city list') %>',
+    store: recordstore,
+	 features: [Ext.create('Ext.grid.feature.GroupingSummary', {
+                        groupByText : '用本字段分组',
+                        showGroupsText : '显示分组',
+                        groupHeaderTpl: '{name}', //分组标题模版
+                        startCollapsed: false, //设置初始分组是否收起
+
+                    })],
+    columns: [
+	{ header: '<%= t('station_name') %>',  dataIndex: 'station_name' , flex: 1, align: 'center' },
+	{ header: '<%= t('station_num') %>',  dataIndex: 'station_num' , flex: 1, align: 'center' },
+	{ header: '<%= t('online_state') %>',  dataIndex: 'online_state' , flex: 1, align: 'center', renderer:online_fomate },
+	{ header: '<%= t('online_time') %>',  dataIndex: 'online_time' , flex: 1, align: 'center' },
+	{ header: '<%= t('offline_time') %>',  dataIndex: 'offline_time' , flex: 1, align: 'center' },
+	{ header: '<%= t('offline_count') %>',  dataIndex: 'offline_count' , flex: 1, align: 'center' },
+	{ header: '<%= t('service_state') %>',  dataIndex: 'service_state' , flex: 1, align: 'center' },
+	{ header: '<%= t('update_percent') %>',  dataIndex: 'update_percent' , flex: 1, align: 'center',renderer:percent_fomate },
+	{ header: '<%= t('update_speed') %>',  dataIndex: 'update_speed' , flex: 1, align: 'center',renderer:speed_fomate },
+	{ header: '<%= t('sync_state') %>',  dataIndex: 'sync_state' , flex: 1, align: 'center', renderer:is_real_fomate }
+	],
+    width: 400,
+    height: 125,
+    selType: 'rowmodel',
+    dockedItems: [{
+        xtype: 'pagingtoolbar',
+        store: recordstore,    
+        dock: 'bottom',
+        displayInfo: true, 
+        items:[
+			
+    	]    
+	}],
+});
+var tabpanel=Ext.create('Ext.tab.Panel', {
+    width: 400,
+    height: 400,
+    items: [grid]
+});
+var work_space = Ext.getCmp('center');
+work_space.removeAll();
+work_space.add(tabpanel);
+work_space.doLayout();

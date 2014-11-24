@@ -1,0 +1,46 @@
+@charset "utf-8";
+
+/*************************************************************************************
+***********************************   Init CSS  *************************************
+**************************************************************************************/
+
+html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,p,blockquote,th,td{margin:0;padding:0;}
+img,body,html{border:0;}
+address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal;}
+ol,ul,li {list-style:none;}
+caption,th {text-align:left;}
+h1,h2,h3,h4,h5,h6{font-size:100%;}
+q:before,q:after{content:'';}
+
+
+
+/*************************************************************************************
+***********************************   Public CSS  *************************************
+**************************************************************************************/
+
+* {font-family: "微软雅黑","宋体",Verdana, Arial, Helvetica, sans-serif !important;}
+body { font-size: 12px; color: #222222;background:#DFE8F6 }
+a:link, a:visited, a:hover, a:active { color: #222222; text-decoration: none }
+
+.color-gray{ color: #DBCCDB}
+.color-blue{ color: #15428B}
+.font-bold { font-weight:bold }
+.font-size14 { font-size:14px; }
+.font-size18 { font-size:18px; }
+.font-size22 { font-size:22px; }
+.font-size24 { font-size:24px; }
+
+
+/*************************************************************************************
+******************************           登录页面          *********************************
+**************************************************************************************/
+#login_body {background:#FFFFFF}
+.login_input { height:29px; width:120px;font-weight:bold; color:#15428B; background:url(../images/login/input_bg.png) repeat-x; border:1px solid #737373; font-size:14px; padding:0 4px; }
+.login_input_focus { height:29px; width:120px;font-weight:bold; color:#15428B; border:1px solid #737373; font-size:14px; padding:0 4px;background-color:#FEFBBD }
+.login_submit { width:90px; height:31px;border:none; background:url(../images/login/submit.png) no-repeat; cursor:pointer; font-weight:bold}
+.login_submit_hover { width:90px; height:31px; border:none; background:url(../images/login/submit_hover.png) no-repeat; cursor:pointer ;font-weight:bold}
+#login_footer { position:absolute; bottom:0; left:0; right:0; background-color:#F3F3F3; border-top:1px solid #DDDDDD;border-bottom:1px solid #DDDDDD; height:50px; text-align:center; color:#999999; }
+
+
+
+

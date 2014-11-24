@@ -1,0 +1,122 @@
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<head>
+<title><%= t('busmonitor_platform') %></title>
+<style type="text/css">
+body
+{
+	margin: 0 0 0 0;
+	background-color: #3C7FB4;
+}
+td
+{
+	line-height: 22px;
+	font-size: 12px;
+	color: #17285B;
+}
+.bg
+{
+	background: url(images/login_03.jpg) top repeat-x;
+}
+.padding-top
+{
+	padding-top: 25px;
+}
+.tablebg
+{
+	padding-left: 12px;
+	padding-right: 12px;
+	background: url(images/login_06.jpg) repeat-x;
+}
+.img
+{
+	background: url(images/login_14.jpg) left bottom no-repeat;
+	padding-left: 200px;
+	padding-top: 20px;
+}
+a:link, a:visited
+{
+	font-size: 12px;
+	text-decoration: none;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color: #466388;
+}
+a:active, a:hover
+{
+	font-size: 12px;
+	text-decoration: none;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color: red;
+}
+.highlight
+{
+	color: #466388;
+	height: 29px;
+	border: 0px;
+	width: 143px;
+	vertical-align: middle;
+	background: url(images/txtbg.gif) top repeat-x;
+	text-indent: 5px;
+	padding: 8px 0px 0px 5px;
+}
+.input
+{
+	color: #466388;
+	height: 29px;
+	border: 0px;
+	width: 143px;
+	vertical-align: middle;
+	background: url(images/txtbg.gif) top repeat-x;
+	text-indent: 5px;
+	padding: 8px 0px 0px 5px;
+}
+.logotext
+{
+	color: #466388;
+	font-size: 12px;
+	font-family: 宋体, Arial, Helvetica, sans-serif;
+}
+.notice {text-align:center;color:red; font-size:20px}
+</style>
+</head>
+<body>
+<% if flash[:alert] %>
+<div class="notice"><%= flash[:alert] %></div>
+<% end %>
+<%= form_tag session_path do %>
+<div>
+<table cellspacing="0" cellpadding="0" width="1003" border="0" align="center">
+	<tr>
+	<td background="images/login.jpg">
+	<table width="1003" border="0" align="center" cellpadding="0" cellspacing="0">
+		<tr>
+		<td height="613" align="center" valign="top">
+			<table cellspacing="5" cellpadding="8" width="480" border="0" style="margin-top: 330px;
+			margin-left: 270px;">
+			<tr>
+				<td class="logotext" align="left" width="150" >
+					<%= t('username') %>&nbsp;&nbsp;<input type="text" name="username" />
+				</td>
+			</tr>
+			<tr>
+				<td class="logotext" align="left" width="150" >
+					<%= t('password') %>&nbsp;&nbsp;&nbsp;<%= password_field_tag :password, nil%>
+				</td>
+			</tr>
+			<tr>
+				<td class="logotext" align="left" width="150" >
+					<input type="submit" value='<%= t('login') %>' />
+					<input type="reset" value='<%= t('reset') %>' />
+				</td>
+			</tr>
+			</table>
+		</td>
+		</tr>
+	</table>
+	</td>
+	</tr>
+</table>
+</div>
+<% end %>
+</body>
+</html>

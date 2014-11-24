@@ -1,0 +1,27 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  station_name: MyString
+  station_num: MyString
+  online_state: MyString
+  online_time: MyString
+  offline_time: MyString
+  offline_count: MyString
+  update_percent: MyString
+  update_speed: MyString
+  sync_state: MyString
+  server_state: MyString
+  project_id: MyString
+
+two:
+  station_name: MyString
+  station_num: MyString
+  online_state: MyString
+  online_time: MyString
+  offline_time: MyString
+  offline_count: MyString
+  update_percent: MyString
+  update_speed: MyString
+  sync_state: MyString
+  server_state: MyString
+  project_id: MyString

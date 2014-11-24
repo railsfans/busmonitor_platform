@@ -1,0 +1,86 @@
+<script>
+Ext.onReady(function(){
+	
+	var mainpanel =new Ext.create('Ext.panel.Panel', {
+        width: 150,
+        height: 150,
+        border: false,
+        frame: false,
+        layout: 'fit',
+    	  bodyStyle: "background: #fff url('../images/body.jpg') no-repeat 0px 0px;background-position: 50% 90%;",
+        html: '<div class="title"><span class="style1">龙湾区公安分局</span><span><li class="style2">征兵政审系统</li><li class="style3">Conscript Political Examination System</li></span></div>'
+    });
+    
+    Ext.QuickTips.init();
+     Ext.create('Ext.container.Viewport', {
+            layout: 'border',
+            items: [{
+                region: 'north',
+                border: false,
+                height: 26,
+                tbar: [ '<div style="color: #15428b; font-size:20px; font-weight:bold; font-family: Verdana,Arial,Helvetica,sans-serif !important;">车载监控管理平台</div>',  '->',  {
+                    	text: '退出',
+                    	iconCls: 'logout',
+                 		id: 'logout',
+                  	animateTarget: 'logout',
+                    	handler : function ( b, e ) {
+                   		Ext.MessageBox.show({
+                        	title:'警告',
+                          	msg: '确认退出',
+                         	closable: true,
+                          	icon: Ext.MessageBox.QUESTION,
+                         	animateTarget: 'logout',
+                         	buttonText: {yes: "确认", no: "取消"},
+                        	fn: function(btn){
+                           	if(btn=='yes')
+                              	Ext.Ajax.request({
+                                 	url: "http://"+document.location.href.split('/')[2]+'/logout',
+                                 	success: function(response, opts) {
+                                  		window.location.href="http://"+document.location.href.split('/')[2]+'/login'
+                                                           					},
+                                  	failure: function(response, opts) {
+                                                         
+                                                           					}
+                                                        				});
+                                                    			}
+                                                		});
+                     				}
+               					 }
+					]
+            				}, {
+                	region: 'west',
+                	collapsible: true,
+                	split: true,
+                	id: 'left',
+                	title: 'menu',
+                	width: 150,
+                	layout: 'accordion',
+                	items: [{
+                    contentEl: 'motiondata-management',
+                    title:  'motiondata show',
+                    iconCls: 'datamenu', 
+                    autoScroll: true
+                				},  
+                                		{
+                    contentEl: 'datagraph-management',
+                    title: 'personal info',
+                    iconCls: 'infomenu',
+                    autoScroll: true
+               				 	},
+                				],
+           				 }, {
+                	region: 'south',
+                	height: 26,            
+            				}, {
+                	region: 'center',
+                	border:true,
+                	layout:"fit",
+                	id: 'center',
+                	items: [     
+	                	mainpanel
+	              				 ]
+            				}]
+        		});
+
+})
+</script>

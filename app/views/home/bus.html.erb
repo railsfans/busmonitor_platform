@@ -1,0 +1,88 @@
+<script>
+Ext.onReady(function() {
+Ext.getCmp('left').items.items[2].expand();	
+var itemsPerPage=30
+var recordstore = Ext.create('Ext.data.Store', {
+    autoLoad: false,
+    fields:['update_percent','cityname','update_time','update_cal','update_version'],
+    pageSize: itemsPerPage,  
+    proxy: {
+        type: 'ajax',
+        url: 'bus.json',   
+        	reader: {
+        		type: 'json',
+        		root: 'gridData',
+            	totalProperty: 'totalCount'
+        	}
+    	} ,
+	groupField: 'cityname' 
+	});
+recordstore.load({
+	params:{
+    		start:0,
+        	limit: itemsPerPage,
+    }
+});
+ function search(type)
+{
+	if(type=="search"){
+        	Ext.getCmp("clear").enable();
+        	recordstore.load({
+         	params:{
+            	start:0,
+            	limit: itemsPerPage,
+             	keyname : Ext.getCmp("search_text").getValue(),
+                        	}
+        		});
+	}else if(type=="clear"){
+        Ext.getCmp("clear").disable();
+        Ext.getCmp("search_text").setValue('');
+        recordstore.load({
+        		params:{
+            	start:0,
+             	limit: itemsPerPage,
+                        }
+       		 });
+        }
+}
+
+var grid=Ext.create('Ext.grid.Panel', {
+    title: '<%= t('city list') %>',
+    store: recordstore,
+	 features: [Ext.create('Ext.grid.feature.GroupingSummary', {
+                        groupByText : '用本字段分组',
+                        showGroupsText : '显示分组',
+                        groupHeaderTpl: '{name}', //分组标题模版
+                        startCollapsed: false, //设置初始分组是否收起
+
+                    })],
+    columns: [
+	{ header: '<%= t('cityname') %>',  dataIndex: 'update_version' , flex: 1, align: 'center' },
+	{ header: '<%= t('update_time') %>',  dataIndex: 'update_time' , flex: 1, align: 'center' },
+	{ header: '<%= t('update_cal') %>',  dataIndex: 'update_cal' , flex: 1, align: 'center' },
+	{ header: '<%= t('update_percent') %>',  dataIndex: 'update_percent' , flex: 1, align: 'center' }
+	],
+    width: 400,
+    height: 125,
+    selType: 'rowmodel',
+    dockedItems: [{
+        xtype: 'pagingtoolbar',
+        store: recordstore,    
+        dock: 'bottom',
+        displayInfo: true, 
+        items:[
+			
+    	]    
+	}],
+});
+var tabpanel=Ext.create('Ext.tab.Panel', {
+    width: 400,
+    height: 400,
+    items: [grid]
+});
+var work_space = Ext.getCmp('center');
+work_space.removeAll();
+work_space.add(tabpanel);
+work_space.doLayout();
+})
+</script>

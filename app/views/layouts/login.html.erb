@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>WIADS公交广告信息发布平台</title>
+    <%= stylesheet_link_tag "login", :cache => true %>
+  </head>
+	<script language="JavaScript">
+	var pc_table='<table width="820" align="center" border="0" cellpadding="0" cellspacing="0">'+
+                        '<tr height="540">'+
+                         '<td width="490"><img src="images/login/left_bg.jpg"/></td>'+
+                         '<td valign="top">'+
+                         '<br/><br/><br/><br/><br/>'+
+
+                         '<%= form_tag session_path do %>'+
+                         '<table cellpadding="10" cellspacing="15">'+
+                           ' <tr align="left">'+
+                           '<td colspan="2" class="font-size24 font-bold">WiBUS 用户登录</td>'+
+                           '<% if flash[:notice] =~ /Invalid login/ %>'+
+                           '<tr>'+
+                              '<td class="font-size14 font-bold">登录错误 </td>'+
+                           ' </tr>'+
+                             '<% elsif flash[:notice] =~ /no user/ %>'+
+                             '<tr>'+
+                             '<td class="font-size14 font-bold">用户不存在 </td>'+
+                             '</tr>'+
+                             '<% elsif flash[:notice] =~ /user disable/ %>'+
+                              '<tr>'+
+                              '<td class="font-size14 font-bold">用户未激活 </td>'+
+                              ' </tr>'+
+                              '<% end %>'+
+                              '</tr>'+
+                            ' <tr>'+
+                             '<td class="font-size14">用户名</td>'+
+                              '<td><%= text_field_tag :username, params[:username],:class=>'login_input',:onblur=>'this.className="login_input"',:onfocus=>'this.className="login_input_focus"' %></td>'+
+                             '</tr>'+
+                              '<tr>'+
+                              '<td class="font-size14">密码</td>'+
+                               '<td><%= password_field_tag :password, params[:password],:class=>"login_input",:onblur=>'this.className="login_input"',:onfocus=>'this.className="login_input_focus"' %></td>'+
+                               '</tr>'+
+                                '<tr>'+
+                                '<td></td>'+
+                                 '<td><%= submit_tag "登录",:class=>"login_submit",:onmouseout=>'this.className="login_submit"', :onmouseover=>'this.className="login_submit_hover"'%></td>'+
+                                 '</tr>'+
+                                 '</table>'+
+                                  '<% end %>'+
+
+
+                               '</td>'+
+                                 '</tr>'+
+                                 '</table>'+
+                              '<div id="login_footer">'+
+                               '<div style="margin-top:8px;">'+
+                                '<span>公司地址: 浙江省杭州市</span>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;'+
+                                 '<span>联系电话: 400-888-8888</span>'+
+                                 '</div>'+
+                                  '<div style="margin-top:3px;">2010-2014 &copy; WiBUS 版权所有</div>'+
+                                  '</div>'
+         document.write(pc_table)
+</script>
+<body id="login_body">
+</body>
+</html>

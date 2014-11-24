@@ -1,0 +1,91 @@
+a {
+  	text-decoration:none;
+}
+.left-menu {
+    padding-top: 5px;
+//    background: #DFE8F6;
+}
+.left-menu a:link, .left-menu a:visited {
+    background: url(../images/menu_shortcuts_bg.png) repeat scroll 0 0 transparent;
+    display: block;
+    height: 60px;
+    margin: 0 auto 5px;
+    overflow: hidden;
+    text-align: center;
+    width: 60px;
+}
+.left-menu a:hover, .left-menu a:active {
+    background: url(../images/menu_shortcuts_bg_hover.png) repeat scroll 0 0 transparent;
+    color: #15428B;
+}
+.left-menu a.selected {
+    background: url(../images/menu_shortcuts_bg_hover.png) repeat scroll 0 0 transparent;
+    color: #15428B;
+    cursor: default;
+}
+.left-menu a .menu-icon {
+    margin: 4px 2px 2px;  
+}
+.left-menu  .menu-text {
+    font-size: 12px;
+    color: #000000;   
+}
+
+.first, .second, .three, .four, .five, .connectmenu {
+    background-image:url(../images/connect.png);
+}
+.logout {
+    background-image:url(../images/logout.png);
+}
+
+.infomenu {
+	background-image: url(../images/infomenu.png);
+}
+.busicon {
+	background-image: url(../images/busicon.png);
+}
+.busmenu {
+	background-image: url(../images/busmenu.png);
+}
+.stationicon {
+	background-image: url(../images/stationicon.png);
+}
+.stationmenu {
+	background-image: url(../images/stationmenu.png);
+}
+.cityicon {
+	background-image: url(../images/cityicon.gif);
+}
+.citymenu {
+	background-image: url(../images/citymenu.png);
+}
+.color-gray{
+	color: #dbccdb;
+}
+.window {
+	background-image: url(../images/window.png);
+}
+/* add delete edit search icon */ 
+.add { background-image: url(../images/user_add.png) !important; background-repeat: no-repeat; }
+
+.delete { background-image: url(../images/user_delete.png) !important; background-repeat: no-repeat; }
+
+.edit { background-image: url(../images/user_edit.png) !important; background-repeat: no-repeat; }
+
+.search { background-image: url(../images/search.png) !important; background-repeat: no-repeat; }
+/*
+ password strength css
+*/
+.strengthmeter {
+    background-image: url(../images/meter.gif);
+    background-size: 100%;
+    width : 100%;
+    float: right;
+}
+
+.scorebar {
+    background-color : white;
+    float: right;
+    line-height : 6px;
+    width : 100%;
+}

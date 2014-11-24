@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  updatetime: MyString
+  updatecount: 1
+  totalcount: 1
+  project_id: MyString
+
+two:
+  updatetime: MyString
+  updatecount: 1
+  totalcount: 1
+  project_id: MyString

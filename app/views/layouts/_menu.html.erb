@@ -1,0 +1,20 @@
+<ul>
+<li id="city-management" class="left-menu">
+     			<%= link_to home_city_path do %>
+                <div><%= image_tag("citymenu.png", :class=>'menu-icon') %></div>
+                <div class="menu-text"><%= t('city management') %></div>
+       <% end %>
+</li>
+<li id="station-management" class="left-menu">
+     			<%= link_to home_station_path do %>
+                <div><%= image_tag("stationmenu.png", :class=>'menu-icon') %></div>
+                <div class="menu-text"><%= t('station management') %></div>
+       <% end %>
+</li>
+<li id="car-management" class="left-menu">
+        <%= link_to home_bus_path do %>
+                <div><%= image_tag("busmenu.png", :class=>'menu-icon') %></div>
+                <div class="menu-text"><%= t('car management') %></div>
+        <% end %>  
+</li>
+</ul>
