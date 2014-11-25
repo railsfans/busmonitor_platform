@@ -20,9 +20,9 @@
                            '<tr>'+
                               '<td class="font-size14 font-bold">登录错误 </td>'+
                            ' </tr>'+
-                             '<% elsif flash[:notice] =~ /no user/ %>'+
+                             '<% elsif flash[:notice] =~ /Please log/ %>'+
                              '<tr>'+
-                             '<td class="font-size14 font-bold">用户不存在 </td>'+
+                             '<td class="font-size14 font-bold">当前用户在其他地方登录,请重新登录 </td>'+
                              '</tr>'+
                              '<% elsif flash[:notice] =~ /user disable/ %>'+
                               '<tr>'+

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141123135327) do
+ActiveRecord::Schema.define(:version => 20141125021636) do
 
   create_table "buses", :force => true do |t|
     t.string   "updatetime"
@@ -65,6 +65,10 @@ ActiveRecord::Schema.define(:version => 20141123135327) do
     t.string   "phone"
     t.boolean  "sex"
     t.string   "realname"
+    t.string   "loginip"
+    t.string   "logintime"
+    t.string   "logincity"
+    t.string   "new_token"
   end
 
 end
