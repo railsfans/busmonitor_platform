@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141125021636) do
+ActiveRecord::Schema.define(:version => 20141130011528) do
 
   create_table "buses", :force => true do |t|
     t.string   "updatetime"
@@ -19,6 +19,10 @@ ActiveRecord::Schema.define(:version => 20141125021636) do
     t.string   "project_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "never_online_count"
+    t.integer  "pass_48h_never_online_count"
+    t.float    "pass_24h_update_rate"
+    t.float    "pass_48h_update_rate"
   end
 
   create_table "cities", :force => true do |t|
@@ -28,6 +32,9 @@ ActiveRecord::Schema.define(:version => 20141125021636) do
     t.string   "project_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "online_state"
+    t.string   "online_time"
+    t.string   "offline_time"
   end
 
   create_table "sessions", :force => true do |t|
@@ -54,6 +61,7 @@ ActiveRecord::Schema.define(:version => 20141125021636) do
     t.string   "project_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "station_id"
   end
 
   create_table "users", :force => true do |t|

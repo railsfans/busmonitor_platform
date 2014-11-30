@@ -4,7 +4,7 @@ Ext.getCmp('left').items.items[2].expand();
 var itemsPerPage=30
 var recordstore = Ext.create('Ext.data.Store', {
     autoLoad: false,
-    fields:['update_percent','cityname','update_time','update_cal','update_version'],
+    fields:['cityname','update_time','update_count','no_update_count','never_online_count','pass_48h_never_online_count','pass_24h_update_rate','pass_48h_update_rate','total_count'],
     pageSize: itemsPerPage,  
     proxy: {
         type: 'ajax',
@@ -45,7 +45,17 @@ recordstore.load({
        		 });
         }
 }
+var task = {
+   run: function() {
+		grid.view.loadMask.useMsg = false;
+		recordstore.reload();
+//		grid.view.loadMask.useMsg = true;
+   },
+   interval: 60000 //1 second
+}
 
+var runner = new Ext.util.TaskRunner();
+runner.start(task);
 var grid=Ext.create('Ext.grid.Panel', {
     title: '<%= t('city list') %>',
     store: recordstore,
@@ -57,10 +67,14 @@ var grid=Ext.create('Ext.grid.Panel', {
 
                     })],
     columns: [
-	{ header: '<%= t('cityname') %>',  dataIndex: 'update_version' , flex: 1, align: 'center' },
+	{ header: '<%= t('total_count') %>',  dataIndex: 'total_count' , flex: 1, align: 'center' },
+	{ header: '<%= t('update_count') %>',  dataIndex: 'update_count' , flex: 1, align: 'center' },
+	{ header: '<%= t('no_update_count') %>',  dataIndex: 'no_update_count' , flex: 1, align: 'center' },
+	{ header: '<%= t('pass_48h_never_online_count') %>',  dataIndex: 'pass_48h_never_online_count' , flex: 1, align: 'center' },
+	{ header: '<%= t('never_online_count') %>',  dataIndex: 'never_online_count' , flex: 1, align: 'center' },
 	{ header: '<%= t('update_time') %>',  dataIndex: 'update_time' , flex: 1, align: 'center' },
-	{ header: '<%= t('update_cal') %>',  dataIndex: 'update_cal' , flex: 1, align: 'center' },
-	{ header: '<%= t('update_percent') %>',  dataIndex: 'update_percent' , flex: 1, align: 'center' }
+//	{ header: '<%= t('pass_24h_update_rate') %>',  dataIndex: 'pass_24h_update_rate' , flex: 1, align: 'center' },
+//	{ header: '<%= t('pass_48h_update_rate') %>',  dataIndex: 'pass_48h_update_rate' , flex: 1, align: 'center' }
 	],
     width: 400,
     height: 125,

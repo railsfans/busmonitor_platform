@@ -63,6 +63,17 @@ function online_fomate(val){
         return "<div class='color-gray'>"+'<%= t('offline') %>'+"</div>";
     }
 };
+var task = {
+   run: function() {
+		grid.view.loadMask.useMsg = false;
+		recordstore.reload();
+//		grid.view.loadMask.useMsg = true;
+   },
+   interval: 60000 //1 second
+}
+
+var runner = new Ext.util.TaskRunner();
+runner.start(task);
 var grid=Ext.create('Ext.grid.Panel', {
     title: '<%= t('city list') %>',
     store: recordstore,

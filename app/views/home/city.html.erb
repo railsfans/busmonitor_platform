@@ -184,7 +184,7 @@ function action_handler(type) {
 var itemsPerPage=30
 var recordstore = Ext.create('Ext.data.Store', {
     autoLoad: false,
-    fields:['ip','rootpasswd','name','project_id','id'],
+    fields:['ip','rootpasswd','name','project_id','id','online_state','online_time','offline_time'],
     pageSize: itemsPerPage,  
     proxy: {
         type: 'ajax',
@@ -202,6 +202,19 @@ recordstore.load({
         	limit: itemsPerPage,
     }
 });
+
+var task = {
+   run: function() {
+		grid.view.loadMask.useMsg = false;
+		recordstore.reload();
+//		grid.view.loadMask.useMsg = true;
+   },
+   interval: 60000 //1 second
+}
+
+var runner = new Ext.util.TaskRunner();
+runner.start(task);
+//yard_monitor_timer = setInterval(function(){recordstore.reload()},5000);
  function search(type)
 {
 	if(type=="search"){
@@ -224,7 +237,13 @@ recordstore.load({
        		 });
         }
 }
-
+function online_fomate(val){
+    if (val) {
+        return "<div>"+'<%= t('online') %>'+"</div>";
+    }else{
+        return "<div class='color-gray'>"+'<%= t('offline') %>'+"</div>";
+    }
+};
 var grid=Ext.create('Ext.grid.Panel', {
     title: '<%= t('city list') %>',
     store: recordstore,
@@ -239,6 +258,9 @@ var grid=Ext.create('Ext.grid.Panel', {
 	{ header: 'id',  dataIndex: 'id' , flex: 1, align: 'center', hidden: true },
 	{ header: '<%= t('project_id') %>',  dataIndex: 'project_id' , flex: 1, align: 'center' },
 	{ header: '<%= t('cityname') %>',  dataIndex: 'name' , flex: 1, align: 'center' },
+	{ header: '<%= t('online_state') %>',  dataIndex: 'online_state' , flex: 1, align: 'center', renderer:online_fomate },
+	{ header: '<%= t('online_time') %>',  dataIndex: 'online_time' , flex: 1, align: 'center' },
+	{ header: '<%= t('offline_time') %>',  dataIndex: 'offline_time' , flex: 1, align: 'center' },
 	{ header: '<%= t('ip') %>',  dataIndex: 'ip' , flex: 1, align: 'center' },
 	{ header: '<%= t('rootpasswd') %>',  dataIndex: 'rootpasswd' , flex: 1, align: 'center' }
 	],

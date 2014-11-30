@@ -53,7 +53,7 @@ before_filter :authenticate
 		respond_to do |format|
 			format.js
 			format.html
-			format.json { render :json=>{:totalCount=>City.all.count, :gridData=> City.order('name').collect {|list| {:id=>list.id, :name=>list.name, :ip=>list.ip, :rootpasswd=>list.rootpasswd, :project_id=>list.project_id }}}}
+			format.json { render :json=>{:totalCount=>City.all.count, :gridData=> City.order('project_id').collect {|list| {:id=>list.id, :name=>list.name, :ip=>list.ip, :rootpasswd=>list.rootpasswd, :project_id=>list.project_id, :online_time=>list.online_time, :offline_time=>list.offline_time, :online_state=>list.online_state }}}}
 		end
 	end
 	def station
@@ -74,7 +74,7 @@ before_filter :authenticate
 			format.js
 			format.html
 			format.json { render :json=>{:totalCount=>Bus.all.count, :gridData=> Bus.all.collect{ |list| i=i+1
-            {:id=>list.id, :update_version=>(i%2==1 ? t('last first time') : t('last second time')),:cityname=>City.find_by_project_id(list.project_id).try(:name), :update_time=>list.updatetime, :update_cal=>list.updatecount.to_s+'/'+list.totalcount.to_s, :update_percent=>list.updatecount*1.0/list.totalcount}
+            {:id=>list.id, :cityname=>City.find_by_project_id(list.project_id).try(:name), :update_time=>list.updatetime,  :update_count=>list.updatecount, :total_count=>list.totalcount, :no_update_count=>(list.totalcount.to_i-list.updatecount.to_i), :never_online_count=>list.never_online_count, :pass_48h_never_online_count=>list.pass_48h_never_online_count, :pass_24h_update_rate=>list.pass_24h_update_rate, :pass_48h_update_rate=>list.pass_48h_update_rate}
           }
         }
       }
