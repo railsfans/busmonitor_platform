@@ -1,6 +1,7 @@
 class SessionsController < ApplicationController
 	layout "login"
 	caches_page :new
+=begin cookie version
 	def create
 		p 'begin'
 		p cookies[:user_id]
@@ -29,7 +30,24 @@ class SessionsController < ApplicationController
 		reset_session
 		redirect_to root_path, :notice => "You successfully logged out"
 	end
+=end
+	def create
+		if  user = User.authenticate(params[:username], params[:password])  
+			token=new_token
+			session[:user_id] = user.id
+			user.update_attributes(:logintime=>Time.now+8.hours, :logincity=>locateIp, :new_token=>token, :loginip=>request.remote_ip)
+			redirect_to home_init_path, :notice => "Logged in successfully"
+		else
+			flash.now[:notice] = 'Invalid login/password combination'
+			render :action => 'new'
+		end
+	end
 	
+	def destroy
+		reset_session
+		redirect_to root_path, :notice => "You successfully logged out"
+	end
+
 	def new
 	end 
 	def routeerror

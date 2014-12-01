@@ -27,10 +27,13 @@ class ApplicationController < ActionController::Base
 	end
 	
 	def authenticate
+=begin cookie version
 		p 'this is application'
 		p cookies.signed[:new_token]
 		p current_user
 		logged_in?  && current_user.new_token==cookies.signed[:new_token] ? true : access_denied
+=end
+		logged_in?  ? true : access_denied
 	end
 	
 	def logged_in?
