@@ -2,8 +2,8 @@
 <html>
 <head>
   <title><%= t('busmonitor_platform') %></title>
-  <%= stylesheet_link_tag "extjsmsgbox.css","extjs-default.css","application.css"%>
-    <%= javascript_include_tag "ext-all", "jquery-1.4.3.min","ext-lang-zh_CN.js","application.js","extjsmsgbox.js","passwdstrength.js","time.js",:cache => true  %>
+  <%= stylesheet_link_tag "extjsmsgbox.css","extjs-default.css","application.css","nprogress.css"%>
+    <%= javascript_include_tag "ext-all", "jquery-1.4.3.min","ext-lang-zh_CN.js","application.js","extjsmsgbox.js","passwdstrength.js","time.js","nprogress.js",:cache => true  %>
   <%= csrf_meta_tag %>
 </head>
 <body onload=window_onload()>
