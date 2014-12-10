@@ -68,20 +68,26 @@ Ext.onReady(function() {
 	    event.preventDefault();
 	});
 */
-
+NProgress.configure({ minimum: 0.1, ease: 'ease', speed: 500 });
 $(".left-menu a:not('.selected')").bind("click",function()
 {
 	$(".left-menu a").removeClass("selected");
 	$(this).addClass("selected");
 	if(window.location.href!=this.href)
         {
-    	$.getScript(this.href);
+		NProgress.start();
+    	$.getScript(this.href,function(){
+			NProgress.done();
+		});
     	history.pushState(null, document.title, this.href);
         }
 	return false
 });
 $(window).bind("popstate", function() {
-	$.getScript(location.href);
+	NProgress.start();
+	$.getScript(location.href, function(){
+		NProgress.done();
+	});
 });
 
 //$.getScript("http://"+document.location.href.split('/')[2]+'/home/getjs.js',function(){
