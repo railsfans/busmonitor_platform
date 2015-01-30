@@ -72,7 +72,7 @@ before_filter :authenticate
 		respond_to do |format|
 			format.js
 			format.html
-			format.json { render :json=>{:totalCount=>Station.all.count, :gridData=> Station.order('station_num').collect{ |list| i=i+1
+			format.json { render :json=>{:totalCount=>Station.all.count<=30 ? Station.all.count : 30, :gridData=> Station.order('station_num').collect{ |list| i=i+1
             {:id=>list.id, :cityname=>(City.find_by_project_id(list.project_id).try(:name).nil? ? t('unknow city'): City.find_by_project_id(list.project_id).try(:name)), :station_name=>list.station_name, :station_num=>list.station_num, :online_state=>list.online_state, :online_time=>list.online_time, :offline_time=>list.offline_time, :offline_count=>list.offline_count, :update_percent=>list.update_percent, :update_speed=>list.update_speed, :sync_state=>list.sync_state, :service_state=>list.service_state}
           }
         }
@@ -84,7 +84,7 @@ before_filter :authenticate
 		respond_to do |format|
 			format.js
 			format.html
-			format.json { render :json=>{:totalCount=>Bus.all.count, :gridData=> Bus.all.collect{ |list| i=i+1
+			format.json { render :json=>{:totalCount=>Bus.all.count<=30 ? Bus.all.count : 30, :gridData=> Bus.all.collect{ |list| i=i+1
             {:id=>list.id, :cityname=>City.find_by_project_id(list.project_id).try(:name), :update_time=>list.updatetime,  :update_count=>list.updatecount, :total_count=>list.totalcount, :no_update_count=>(list.totalcount.to_i-list.updatecount.to_i), :never_online_count=>list.never_online_count, :pass_48h_never_online_count=>list.pass_48h_never_online_count, :pass_24h_update_rate=>list.pass_24h_update_rate, :pass_48h_update_rate=>list.pass_48h_update_rate}
           }
         }
