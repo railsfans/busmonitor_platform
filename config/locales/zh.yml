@@ -81,3 +81,8 @@ zh:
   update_time: "最新更新视频时间"
   pass_24h_update_rate: "过去24小时车辆更新率"
   pass_48h_update_rate: "过去48小时车辆更新率"
+  please fill ip first: "请先填写IP地址后再试"
+  webplatform link: "跳转到管理平台"
+  sshport range: "ssh端口范围"
+  reach: "到"
+  begin num is great than end num: "起始端口大于截止端口"

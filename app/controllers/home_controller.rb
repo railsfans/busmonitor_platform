@@ -11,7 +11,7 @@ before_filter :authenticate
 	def add_cityinfo
 		if City.find_by_project_id(params[:project_id]).nil?
 			flag=true
-			City.create(:name=>params[:cityname], :ip=>params[:ip], :rootpasswd=>params[:rootpasswd], :project_id=>params[:project_id])
+			City.create(:name=>params[:cityname], :ip=>params[:ip], :rootpasswd=>params[:rootpasswd], :project_id=>params[:project_id], :sshport_range=>params[:minport]+','+params[:maxport])
 		else
 			flag=false
 		end
@@ -20,11 +20,14 @@ before_filter :authenticate
 		end
 	end
 	def edit_cityinfo
+		puts "SIDEKIQ TEST BEGIN"
+#		HardWorker.perform_async('ihover')
+		puts "SIDEKIQ TEST END"
 		if !City.find_by_project_id(params[:project_id]).nil? && City.find_by_project_id(params[:project_id]).id!=params[:id].to_i
 			flag=false
 		else
 			flag=true
-			City.find_by_id(params[:id]).update_attributes(:name=>params[:cityname], :ip=>params[:ip], :rootpasswd=>params[:rootpasswd], :project_id=>params[:project_id])
+			City.find_by_id(params[:id]).update_attributes(:name=>params[:cityname], :ip=>params[:ip], :rootpasswd=>params[:rootpasswd], :project_id=>params[:project_id], :sshport_range=>params[:minport]+','+params[:maxport])
 		end
 		respond_to do |format|
 			format.json { render :json=>{:success=>flag}}
@@ -50,10 +53,18 @@ before_filter :authenticate
 	end
 
 	def city
+		keyname=params[:keyname] || ''
+		if keyname==''
+			@city=City.order('project_id')
+			@count=City.all.count
+		else
+			@city=City.where("name like ? or ip like ? or project_id like ?","%"+keyname+"%","%"+keyname+"%","%"+keyname+"%")
+			@count=30
+		end
 		respond_to do |format|
 			format.js
 			format.html
-			format.json { render :json=>{:totalCount=>City.all.count, :gridData=> City.order('project_id').collect {|list| {:id=>list.id, :name=>list.name, :ip=>list.ip, :rootpasswd=>list.rootpasswd, :project_id=>list.project_id, :online_time=>list.online_time, :offline_time=>list.offline_time, :online_state=>list.online_state }}}}
+			format.json { render :json=>{:totalCount=>@count, :gridData=> @city.collect {|list| {:id=>list.id, :name=>list.name, :ip=>list.ip, :rootpasswd=>list.rootpasswd, :sshport_range=>list.sshport_range,:project_id=>list.project_id, :online_time=>list.online_time, :offline_time=>list.offline_time, :online_state=>list.online_state }}}}
 		end
 	end
 	def station

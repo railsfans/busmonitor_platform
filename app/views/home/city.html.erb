@@ -17,7 +17,17 @@ Ext.apply(Ext.form.VTypes,{
     // default error text
     ipText: "Not a valid IP, Correct Format is 12.23.2.1",
     // filter keys, can only type digit and dot
-    ipMask: /[\d\.]/i
+    ipMask: /[\d\.]/i,
+    numrange: function(value,field){
+		start=field.up('form').getForm().findField('minport');
+		end=field.up('form').getForm().findField('maxport');
+		if(start.getValue()==null || end.getValue()==null)
+			return true;
+		if(start.getValue()>end.getValue())
+				return false;
+		return true;
+	    },
+    numrangeText: "<%= t('begin num is great than end num') %>"
 });
 
 function action_handler(type) {
@@ -25,7 +35,8 @@ function action_handler(type) {
 		width: 300,
 		frame: true,
   // 	title: '<%= t('cityname') %>',
-     	bodyPadding: '10 10 0',
+ //   bodyPadding: '10 10 0',
+		border: 0,
     	height: 500,
      	defaults: {
       	anchor: '100%',
@@ -45,6 +56,7 @@ function action_handler(type) {
 		},
 		{xtype:"textfield",fieldLabel: '<%= t('cityname') %>',name: "cityname",allowBlank: false},   
 		{xtype:"textfield",fieldLabel: '<%= t('ip') %>',name: "ip", vtype: "ip", vtypeText:'<%= t('ip format error') %>'},
+		{xtype:"fieldcontainer",fieldLabel:'<%= t('sshport range') %>',layout:'hbox',combineErrors:true,defaults:{flex:1,hideLabel:true},items:[{name:'minport',xtype:'numberfield',minValue:1,allowNegative:false,allowDecimals:false,flex:0.4,vtype:'numrange',endField:'endField',id:'startField'},{xtype:"displayfield",value:"<%= t('reach') %>",flex:0.06, margin:'0 4 0 4'},{name:'maxport',xtype:'numberfield',minValue:1,allowNegative:false,allowDecimals:false,flex:0.4,vtype:'numrange',startField:'startField',id:'endField'}]},
 		{xtype:"textfield",fieldLabel: '<%= t('rootpasswd') %>',name: "rootpasswd"},
         	],
  		buttonAlign: 'center',
@@ -106,15 +118,16 @@ function action_handler(type) {
 
 	var window = new Ext.Window({
 		iconCls:"window",
+		border: 0,
 		width:280,
-		height:220,
+		height:240,
 		resizable:false,
 		layout:"fit",
-		closeAction:'close',
+		closeAction:'destroy',
 		plain: true,
 		constrainHeader:true,
 		modal:true,
-		bodyStyle: 'padding:5px;',
+	//	bodyStyle: 'padding:5px;',
 		items:[cityform]
 	});
 	var rows = grid.getSelectionModel().getSelection();
@@ -130,6 +143,8 @@ function action_handler(type) {
 					project_id:rows[0].get("project_id"),
 					ip: rows[0].get("ip"),
 					rootpasswd: rows[0].get("rootpasswd"),
+					minport:rows[0].get("sshport_range").split(',')[0],
+					maxport:rows[0].get("sshport_range").split(',')[1],
 				});
 				window.show();
 				window.setTitle('<%= t('edit cityinfo') %>');
@@ -186,7 +201,7 @@ function action_handler(type) {
 var itemsPerPage=30
 var recordstore = Ext.create('Ext.data.Store', {
     autoLoad: false,
-    fields:['ip','rootpasswd','name','project_id','id','online_state','online_time','offline_time'],
+    fields:['ip','rootpasswd','name','project_id','id','online_state','online_time','offline_time','sshport_range'],
     pageSize: itemsPerPage,  
     proxy: {
         type: 'ajax',
@@ -246,9 +261,18 @@ function online_fomate(val){
         return "<div class='color-gray'>"+'<%= t('offline') %>'+"</div>";
     }
 };
+function sshport_fomate(val){
+	  if(val==',')
+			return ''
+		else
+			return val.replace(/,/,'~')
+};
 var grid=Ext.create('Ext.grid.Panel', {
     title: '<%= t('city list') %>',
     store: recordstore,
+	 viewConfig:{
+		enableTextSelection:true
+	},
     columns: [
         {
             xtype: 'rownumberer',
@@ -264,7 +288,38 @@ var grid=Ext.create('Ext.grid.Panel', {
 	{ header: '<%= t('online_time') %>',  dataIndex: 'online_time' , flex: 1, align: 'center' },
 	{ header: '<%= t('offline_time') %>',  dataIndex: 'offline_time' , flex: 1, align: 'center' },
 	{ header: '<%= t('ip') %>',  dataIndex: 'ip' , flex: 1, align: 'center' },
-	{ header: '<%= t('rootpasswd') %>',  dataIndex: 'rootpasswd' , flex: 1, align: 'center' }
+	{ header: '<%= t('sshport range') %>',  dataIndex: 'sshport_range' , flex: 1, align: 'center', renderer:sshport_fomate },
+	{ header: '<%= t('rootpasswd') %>',  dataIndex: 'rootpasswd' , flex: 1, align: 'center' },
+	{
+		header:"<%= t('webplatform link') %>",
+   	xtype: 'actioncolumn',
+      flex: 1, 
+		iconCls: 'urllink',
+      align:"center",
+   	items: [{
+      	icon: '../images/link.png',
+         tooltip: 'ip',
+			getClass: function(value,meta,record,rowIx,colIx,store){
+				var rec = grid.getStore().getAt(rowIx);
+				weburl="http://"+rec.get('ip')+":8755";
+				this.items[0].tooltip=weburl;
+				return 'urllink';
+			},
+       	handler: function(grid, rowIndex, colIndex) { 
+				var rec = grid.getStore().getAt(rowIndex);
+				if(rec.get('ip')=='')
+				{
+					Ext.MessageBox.alert("<%= t('warn') %>","<%= t('please fill ip first') %>");	
+					hide_message();
+				}
+				else
+				{
+					weburl="http://"+rec.get('ip')+":8755";
+					window.open(weburl);
+				}
+			}
+		}]
+	}
 	],
     width: 400,
     height: 125,
