@@ -1,8 +1,8 @@
 :concurrency: 5
 :timeout: 30
 :verbose: false
-:pidfile: /opt/busmonitor_platform/tmp/pids/sidekiq.pid  
-:logfile: /opt/busmonitor_platform/log/sidekiq.log 
+:pidfile: /opt/webserver/monitor_web/current/tmp/pids/sidekiq.pid  
+:logfile: /opt/webserver/monitor_web/current/log/sidekiq.log 
 :queues:
 - default # 写在队列参数中的, 表示让 sidekiq 处理这个 queue
 - [sidekiq_job, 2] # 使用数组的形式写, 第一个参数为打开的 queue 的名称, 第二个为优先级
