@@ -1,4 +1,6 @@
+require 'sidekiq/web'
 BusmonitorPlatform::Application.routes.draw do
+	mount Sidekiq::Web=>'/sidekiq'
 	resource  :session
 	match '/login' => "sessions#new", :as => "login" 
 	match '/logout' => "sessions#destroy", :as => "logout"
@@ -12,6 +14,7 @@ BusmonitorPlatform::Application.routes.draw do
 	match 'home/add_cityinfo'=>"home#add_cityinfo"
 	match 'home/edit_cityinfo'=>"home#edit_cityinfo"
 	match 'home/delete_cityinfo'=>"home#edit_cityinfo"
+	match 'home/backup'=>"home#backup"
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

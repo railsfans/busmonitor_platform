@@ -198,7 +198,7 @@ function action_handler(type) {
 var itemsPerPage=30
 var recordstore = Ext.create('Ext.data.Store', {
     autoLoad: false,
-    fields:['ip','rootpasswd','name','project_id','online_state','online_time','offline_time','sshport_range'],
+    fields:['ip','rootpasswd','name','project_id','online_state','online_time','offline_time','sshport_range','backup_status','backup_time'],
     pageSize: itemsPerPage,  
     proxy: {
         type: 'ajax',
@@ -263,6 +263,17 @@ function sshport_fomate(val){
 		else
 			return val.replace(/,/,'~')
 };
+function backup_status_fomate(val)
+{
+	if(val==0)
+		return '<%= t('un_backup') %>'
+	else if(val==1)
+		return '<%= t('backuping') %>'
+	else if(val==2)
+		return '<%= t('backup_finished') %>'
+	else 
+		return '<%= t('backup_failure') %>'
+}
 var grid=Ext.create('Ext.grid.Panel', {
     title: '<%= t('city list') %>',
     store: recordstore,
@@ -314,6 +325,58 @@ var grid=Ext.create('Ext.grid.Panel', {
 				}
 			}
 		}]
+	},
+	{ 	
+		header: '<%= t('backup') %>',  
+		columns:[
+		{
+			text: '<%= t('backup') %>',
+			width:75, 
+			align: 'center',
+			xtype: 'actioncolumn',
+			iconCls: 'backup',
+			items: [{
+	      	icon: '../images/backup.png',
+	         tooltip: '<%= t('backup') %>',
+				handler: function(grid, rowIndex, colIndex) { 
+					var rec = grid.getStore().getAt(rowIndex);
+					Ext.Ajax.request({
+						url: 'backup.json',
+						params: { id: rec.get('id')},
+						success: function(){
+							recordstore.reload();
+							Ext.MessageBox.alert("<%= t('warn') %>","<%= t('backup serverdata success') %>");	 
+							hide_message();	 
+						},
+						failure: function(){
+							recordstore.reload();
+							Ext.MessageBox.alert("<%= t('warn') %>","<%= t('backup serverdata failure') %>");	 
+							hide_message();	
+						}
+					})
+				}
+			}]
+		},
+		{
+			text: '<%= t('backup_status') %>',
+			dataIndex: 'backup_status',
+			width:75, 
+			align: 'center', 
+			renderer:backup_status_fomate
+		},
+		{
+			text: '<%= t('backup_time') %>',
+			dataIndex: 'backup_time',
+			width:75, 
+			align: 'center',
+			renderer: function(value, meta, record){
+				if (value==null)
+					value=''
+				var max = 100;
+        		meta.tdAttr = 'data-qtip="' + value + '"';
+         	return value.length < max ? value : value.substring(0, max) + '...';
+			}
+		}] 
 	}
 	],
     width: 400,

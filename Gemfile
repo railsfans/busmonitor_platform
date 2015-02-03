@@ -6,8 +6,9 @@ gem 'rails', '3.0.3'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'mysql2'
-#gem 'sidekiq', '2.17.4'
-#gem 'sinatra', '>= 1.3.0', require: false  
+gem 'sidekiq', '2.17.4'
+gem 'sinatra'
+#gem 'capistrano-sidekiq' ,'0.2.8',  group: :development  
 #gem 'slim'  
 # Use unicorn as the web server
 # gem 'unicorn'

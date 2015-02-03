@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150130064301) do
+ActiveRecord::Schema.define(:version => 20150202072610) do
 
   create_table "buses", :force => true do |t|
     t.string   "updatetime"
@@ -36,6 +36,8 @@ ActiveRecord::Schema.define(:version => 20150130064301) do
     t.string   "online_time"
     t.string   "offline_time"
     t.string   "sshport_range", :default => ","
+    t.integer  "backup_status", :default => 0
+    t.string   "backup_time"
   end
 
   create_table "sessions", :force => true do |t|
