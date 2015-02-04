@@ -198,7 +198,7 @@ function action_handler(type) {
 var itemsPerPage=30
 var recordstore = Ext.create('Ext.data.Store', {
     autoLoad: false,
-    fields:['ip','rootpasswd','name','project_id','online_state','online_time','offline_time','sshport_range','backup_status','backup_time'],
+    fields:['ip','rootpasswd','name','project_id','online_state','online_time','offline_time','sshport_range','backup_status','backup_time','deploy_status','deploy_time'],
     pageSize: itemsPerPage,  
     proxy: {
         type: 'ajax',
@@ -274,6 +274,17 @@ function backup_status_fomate(val)
 	else 
 		return '<%= t('backup_failure') %>'
 }
+function deploy_status_fomate(val)
+{
+	if(val==0)
+		return '<%= t('un_deploy') %>'
+	else if(val==1)
+		return '<%= t('deploying') %>'
+	else if(val==2)
+		return '<%= t('deploy_finished') %>'
+	else 
+		return '<%= t('deploy_failure') %>'
+}
 var grid=Ext.create('Ext.grid.Panel', {
     title: '<%= t('city list') %>',
     store: recordstore,
@@ -340,20 +351,33 @@ var grid=Ext.create('Ext.grid.Panel', {
 	         tooltip: '<%= t('backup') %>',
 				handler: function(grid, rowIndex, colIndex) { 
 					var rec = grid.getStore().getAt(rowIndex);
-					Ext.Ajax.request({
-						url: 'backup.json',
-						params: { id: rec.get('id')},
-						success: function(){
-							recordstore.reload();
-							Ext.MessageBox.alert("<%= t('warn') %>","<%= t('backup serverdata success') %>");	 
-							hide_message();	 
-						},
-						failure: function(){
-							recordstore.reload();
-							Ext.MessageBox.alert("<%= t('warn') %>","<%= t('backup serverdata failure') %>");	 
-							hide_message();	
-						}
-					})
+					if(rec.get('ip')=='')
+					{
+						Ext.MessageBox.alert("<%= t('warn') %>","<%= t('please fill ip first') %>");	 
+						hide_message();	
+					}
+					else if(rec.get('backup_status')==1)
+					{
+						Ext.MessageBox.alert("<%= t('warn') %>","<%= t('please wait until finish backup') %>");	 
+						hide_message();	
+					}
+					else
+					{
+						Ext.Ajax.request({
+							url: 'backup.json',
+							params: { id: rec.get('id')},
+							success: function(){
+								recordstore.reload();
+								Ext.MessageBox.alert("<%= t('warn') %>","<%= t('backup serverdata success') %>");	 
+								hide_message();	 
+							},
+							failure: function(){
+								recordstore.reload();
+								Ext.MessageBox.alert("<%= t('warn') %>","<%= t('backup serverdata failure') %>");	 
+								hide_message();	
+							}
+						})
+					}
 				}
 			}]
 		},
@@ -367,6 +391,76 @@ var grid=Ext.create('Ext.grid.Panel', {
 		{
 			text: '<%= t('backup_time') %>',
 			dataIndex: 'backup_time',
+			width:75, 
+			align: 'center',
+			renderer: function(value, meta, record){
+				if (value==null)
+					value=''
+				var max = 100;
+        		meta.tdAttr = 'data-qtip="' + value + '"';
+         	return value.length < max ? value : value.substring(0, max) + '...';
+			}
+		}] 
+	},
+	{ 	
+		header: '<%= t('deploy') %>',  
+		columns:[
+		{
+			text: '<%= t('deploy') %>',
+			width:75, 
+			align: 'center',
+			xtype: 'actioncolumn',
+			iconCls: 'deploy',
+			items: [{
+	      	icon: '../images/deploy.png',
+	         tooltip: '<%= t('deploy') %>',
+				handler: function(grid, rowIndex, colIndex) { 
+					var rec = grid.getStore().getAt(rowIndex);
+					if(rec.get('ip')=='')
+					{
+						Ext.MessageBox.alert("<%= t('warn') %>","<%= t('please fill ip first') %>");	 
+						hide_message();	
+					}
+					else if(rec.get('deploy_status')==1)
+					{
+						Ext.MessageBox.alert("<%= t('warn') %>","<%= t('please wait until finish deploy') %>");	 
+						hide_message();	
+					}
+					else if(rec.get('rootpasswd')=='')
+					{
+						Ext.MessageBox.alert("<%= t('warn') %>","<%= t('please fill rootpasswd first') %>");	 
+						hide_message();	
+					}
+					else
+					{
+						Ext.Ajax.request({
+							url: 'backup.json',
+							params: { id: rec.get('id')},
+							success: function(){
+								recordstore.reload();
+								Ext.MessageBox.alert("<%= t('warn') %>","<%= t('deploy server success') %>");	 
+								hide_message();	 
+							},
+							failure: function(){
+								recordstore.reload();
+								Ext.MessageBox.alert("<%= t('warn') %>","<%= t('deploy server failure') %>");	 
+								hide_message();	
+							}
+						})
+					}
+				}
+			}]
+		},
+		{
+			text: '<%= t('deploy_status') %>',
+			dataIndex: 'deploy_status',
+			width:75, 
+			align: 'center', 
+			renderer:deploy_status_fomate
+		},
+		{
+			text: '<%= t('deploy_time') %>',
+			dataIndex: 'deploy_time',
 			width:75, 
 			align: 'center',
 			renderer: function(value, meta, record){

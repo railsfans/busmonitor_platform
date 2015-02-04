@@ -7,6 +7,9 @@ a {
 .backup{
 	cursor:pointer
 }
+.deploy{
+	cursor:pointer
+}
 .x-grid-row-over .x-grid-cell-inner {
     font-weight: bold;
 }
