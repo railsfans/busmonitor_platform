@@ -39,7 +39,7 @@ ActiveRecord::Schema.define(:version => 20150204084128) do
     t.integer  "backup_status", :default => 0
     t.string   "backup_time"
     t.string   "deploy_time"
-    t.string   "deploy_status"
+    t.string   "deploy_status", :default => "0"
   end
 
   create_table "sessions", :force => true do |t|

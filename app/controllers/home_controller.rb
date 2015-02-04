@@ -20,10 +20,6 @@ before_filter :authenticate
 		end
 	end
 	def edit_cityinfo
-		puts "SIDEKIQ TEST BEGIN"
-		type='test'
-		HardWorker.perform_async(type,'ihover')
-		puts "SIDEKIQ TEST END"
 		if !City.find_by_project_id(params[:project_id]).nil? && City.find_by_project_id(params[:project_id]).id!=params[:id].to_i
 			flag=false
 		else
@@ -46,7 +42,6 @@ before_filter :authenticate
 	def modify_personinfo
 		flag=true
 		User.find_by_id(params[:id]).update_attributes(:realname=>params[:realname],:sex=>params[:sex],:phone=>params[:phone], :email=>params[:email])
-		p params[:newpasswd].nil?
 		User.find_by_id(params[:id]).update_attributes(:password=>params[:newpasswd], :password_confirmation=>params[:password_confirmation]) if !params[:newpasswd].empty?
 		respond_to do |format|
 			format.json { render :json=>{:success=>flag }}
@@ -56,6 +51,15 @@ before_filter :authenticate
 		flag=true
 		type='backup'
 		City.find(params[:id]).update_attributes(:backup_status=>1)
+		HardWorker.perform_async(type,params[:id])
+		respond_to do |format|
+			format.json { render :json=>{:success=>flag }}
+		end	
+	end
+	def deploy
+		flag=true
+		type='deploy'
+		City.find(params[:id]).update_attributes(:deploy_status=>1)
 		HardWorker.perform_async(type,params[:id])
 		respond_to do |format|
 			format.json { render :json=>{:success=>flag }}
@@ -73,7 +77,7 @@ before_filter :authenticate
 		respond_to do |format|
 			format.js
 			format.html
-			format.json { render :json=>{:totalCount=>@count, :gridData=> @city.collect {|list| {:backup_time=>list.backup_time, :backup_status=>list.backup_status,:id=>list.id, :name=>list.name, :ip=>list.ip, :rootpasswd=>list.rootpasswd, :sshport_range=>list.sshport_range,:project_id=>list.project_id, :online_time=>list.online_time, :offline_time=>list.offline_time, :online_state=>list.online_state }}}}
+			format.json { render :json=>{:totalCount=>@count, :gridData=> @city.collect {|list| {:deploy_time=>list.deploy_time, :deploy_status=>list.deploy_status,:backup_time=>list.backup_time, :backup_status=>list.backup_status,:id=>list.id, :name=>list.name, :ip=>list.ip, :rootpasswd=>list.rootpasswd, :sshport_range=>list.sshport_range,:project_id=>list.project_id, :online_time=>list.online_time, :offline_time=>list.offline_time, :online_state=>list.online_state }}}}
 		end
 	end
 	def station

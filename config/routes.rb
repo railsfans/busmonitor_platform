@@ -15,6 +15,7 @@ BusmonitorPlatform::Application.routes.draw do
 	match 'home/edit_cityinfo'=>"home#edit_cityinfo"
 	match 'home/delete_cityinfo'=>"home#edit_cityinfo"
 	match 'home/backup'=>"home#backup"
+	match 'home/deploy'=>"home#deploy"
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
