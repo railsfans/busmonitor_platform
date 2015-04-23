@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150204084128) do
+ActiveRecord::Schema.define(:version => 20150416061300) do
 
   create_table "buses", :force => true do |t|
     t.string   "updatetime"
@@ -40,6 +40,19 @@ ActiveRecord::Schema.define(:version => 20150204084128) do
     t.string   "backup_time"
     t.string   "deploy_time"
     t.string   "deploy_status", :default => "0"
+  end
+
+  create_table "projectids", :force => true do |t|
+    t.string   "code_first",  :default => "00"
+    t.string   "code_second", :default => "00"
+    t.string   "code_third",  :default => "00"
+    t.string   "code_four",   :default => "00"
+    t.string   "code_five",   :default => "00"
+    t.string   "name",        :default => "root"
+    t.integer  "parent_id",   :default => 0
+    t.integer  "rank",        :default => 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "sessions", :force => true do |t|

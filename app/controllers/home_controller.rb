@@ -1,5 +1,24 @@
 class HomeController < ApplicationController
 before_filter :authenticate
+	def projectid
+	end
+	def allprojectid
+		if params[:parent_id].to_s!="" && Projectid.find_by_id(params[:parent_id]).try(:rank)!=5
+      	@projectids=Projectid.order("code_first ASC").where(:parent_id=>params[:parent_id])
+			leaf=false
+		else
+			@projectids=[]
+			leaf=true
+		end
+		respond_to do |format|
+			format.json { render :json=>{:children=>@projectids.collect{ |list|
+         {:iconCls=>'treeicon', :leaf=>leaf, :id => list.id,:qtip=>list.name, :parent_id=>list.parent_id, :code_first=>list.code_first, :code_second=>list.code_second, :code_third=>list.code_third, :code_four=>list.code_four, :code_five=>list.code_five, :rank=>list.rank, :name=>list.name }
+       }}}
+#			 format.json { render :json=>@projectids.collect{ |list|
+#          {:id => list.id, :parent_id=>list.parent_id, :code_first=>list.code_first, :code_second=>list.code_second, :code_third=>list.code_third, :code_four=>list.code_four, :code_five=>list.code_five, :rank=>list.rank, :name=>list.name }
+ #       }}
+		end
+	end
 	def delete_cityinfo
 		params[:id].split(',').each do |i|
 			City.find(i).destroy
@@ -64,6 +83,24 @@ before_filter :authenticate
 		respond_to do |format|
 			format.json { render :json=>{:success=>flag }}
 		end	
+	end
+	def deployprogress
+		txtname=City.find(params[:id]).project_id.to_s+'_install_log.txt'
+		if !File.file? File.join("/opt/tmp/cap",txtname)
+			txt=''
+		else
+		 	cmd="cd /opt/tmp/cap; tail "+txtname+" -n 1000 | grep + >tmp.txt"
+	   	system(cmd)
+	     	txt=''
+	    	f = File.open(File.join("/opt/tmp/cap","tmp.txt"),"r")
+	     	f.each do |line|
+	      	txt=txt+"#{line}"+"<br>"
+	    	end
+			f.close
+		end
+		respond_to do |format|
+        	format.json { render :json=>{:success=>true, :log=>txt }}
+		end
 	end
 	def city
 		keyname=params[:keyname] || ''

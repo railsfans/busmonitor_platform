@@ -195,6 +195,26 @@ function action_handler(type) {
 		}
 	}
 }
+var span = function (grid, row, col, type, num) {  
+    switch (type) {  
+        case 'row':  
+              tds = Ext.get(grid.view.getNode(row)).query('td');
+             Ext.get(tds[col]).set({rowspan: num});
+			  for (i = row + 1; i < row + num; i++) {  
+			  Ext.get(Ext.get(grid.view.getNode(i)).query('td')[col]).destroy();  
+			  }  
+              Ext.get(Ext.get(tds[col])).setStyle({ 'vertical-align' : 'middle' });  
+            break;  
+        case 'col':  
+                tds = Ext.get(grid.view.getNode(row)).query('td');
+             Ext.get(tds[col]).set({colspan: num}); 
+			  Ext.get(Ext.get(tds[col])).setStyle({ 'vertical-align' : 'middle' });  
+			  for (i = col + 1; i < col + num; i++) {  
+			   Ext.get(tds[i]).destroy(); 
+			  }  
+            break;  
+    }  
+}; 
 var itemsPerPage=30
 var recordstore = Ext.create('Ext.data.Store', {
     autoLoad: false,
@@ -216,7 +236,78 @@ recordstore.load({
         	limit: itemsPerPage,
     }
 });
+	 
+Ext.create('Ext.data.Store', {
+    storeId:'simpsonsStore',
+    fields:['name', 'email', 'phone'],
+    data:{'items':[
+        { 'name': 'Lisa',  "email":"lisa@simpsons.com",  "phone":"555-111-1224"  },
+        { 'name': 'Bart',  "email":"bart@simpsons.com",  "phone":"555-222-1234" },
+        { 'name': 'Homer', "email":"home@simpsons.com",  "phone":"555-222-1244"  },
+        { 'name': 'Marge', "email":"marge@simpsons.com", "phone":"555-222-1254"  }
+    ]},
+    proxy: {
+        type: 'memory',
+        reader: {
+            type: 'json',
+            root: 'items'
+        }
+    },
+	callback: function(records, operation, success) {
+ //     span(grid,0,1,'col',2); 
+		alert('test');
+    	}
+});
 
+var localgrid_west=Ext.create('Ext.grid.Panel', {
+<% if false %>
+    title: 'Simpsons',
+    store: Ext.data.StoreManager.lookup('simpsonsStore'),
+    columns: [
+        { header: 'Name',  dataIndex: 'name' },
+        { header: 'Email', dataIndex: 'email', flex: 1 },
+        { header: 'Phone', dataIndex: 'phone' }
+    ],
+    height: 200,
+    width: 400
+<% end %>
+//	id:"playlog_grid_north_id",
+    title:"广告监播",
+//    iconCls:"silk-application_view_list",
+    store: Ext.data.StoreManager.lookup('simpsonsStore'),
+//    loadMask:true,
+//    stateful: true,
+//    stripeRows: true,                                //上半部分高度
+//    split: true,                                 //上下分界线可以自行调整
+    region: 'north',
+//    style:{ borderBottom:"1px solid #99BBE8"},   //分界线的样式
+//    border:false,
+//    viewConfig: { forceFit: true},
+    columns: [
+        { header: 'Name',  dataIndex: 'name' },
+        { header: 'Email', dataIndex: 'email', flex: 1 },
+        { header: 'Phone', dataIndex: 'phone' }
+    	],
+});
+var localgrid_east=Ext.create('Ext.grid.Panel', {
+//	id:"playlog_grid_east_id",
+    title:"广告监播",
+//    iconCls:"silk-application_view_list",
+    store: Ext.data.StoreManager.lookup('simpsonsStore'),
+//    loadMask:true,
+//    stateful: true,
+//    stripeRows: true,                                //上半部分高度
+//    split: true,                                 //上下分界线可以自行调整
+    region: 'south',
+//    style:{ borderBottom:"1px solid #99BBE8"},   //分界线的样式
+//    border:false,
+//    viewConfig: { forceFit: true},
+    columns: [
+        { header: 'Name',  dataIndex: 'name' },
+        { header: 'Email', dataIndex: 'email', flex: 1 },
+        { header: 'Phone', dataIndex: 'phone' }
+    	],
+});	
 var task = {
    run: function() {
 		grid.view.loadMask.useMsg = false;
@@ -483,8 +574,8 @@ var grid=Ext.create('Ext.grid.Panel', {
         displayInfo: true, 
         items:[
 			{ text: '<%= t('add') %>',id:"add", iconCls:"add", handler:function(){action_handler("add")} },
-			{ text: '<%= t('edit') %>',id:"edit", iconCls:"edit", disabled: true, handler:function(){action_handler("edit")} },
-			{ text: '<%= t('delete') %>',id:"delete", iconCls:"delete", disabled: true,handler:function(){action_handler("delete")} },
+			{ text: '<%= t('edit') %>',id:"edit", iconCls:"edit", handler:function(){action_handler("edit")} },
+			{ text: '<%= t('delete') %>',id:"delete", iconCls:"delete", handler:function(){action_handler("delete")} },
     		 	{
          	xtype: 'textfield',
            	hideLabel: true,
@@ -496,16 +587,312 @@ var grid=Ext.create('Ext.grid.Panel', {
     	]    
 	}],
 });
-grid.getSelectionModel().on('selectionchange',function(selModel,selections){
-	grid.down('#edit').setDisabled(selections.length==0);
-	grid.down('#delete').setDisabled(selections.length==0);
-});
 var tabpanel=Ext.create('Ext.tab.Panel', {
     width: 400,
     height: 400,
-    items: [grid]
+    items: [localgrid_east]
 });
+
+ var myStore = new Ext.data.TreeStore({
+ 	fields: ['id','name','code_first','code_second','code_third','code_four','code_five','parent_id','rank'],  
+	proxy: {
+		type: 'ajax',
+		url: 'allprojectid.json',
+		reader: 'json',
+	},
+	autoLoad: true,
+	nodeParam : 'parent_id',
+	listeners: {
+		'expand': function(node, opt){
+			if(node["internalId"]==4)
+				node.expandChildren()
+                }
+	},
+ 	root:{                  
+		id: 1,
+		name: '',
+		qtip: '',
+		iconCls:'treeicon',
+		expanded: true   
+           }  
+        });
+var tree_panel = Ext.create('Ext.tree.Panel', {
+            layout: 'fit',
+            tools:[{
+                type:'refresh',
+                tooltip: '<%= t('refresh') %>',
+                handler: function(event, toolEl, panel){
+                    myStore.load()
+                }
+            }],
+            columns: [{
+                xtype: 'treecolumn', 
+                text: '<%= t('region') %>',
+                dataIndex: 'name',
+                flex: 1,
+                sortable: true
+            }, {
+                text: '<%= t('code_first') %>',
+                dataIndex: 'code_first',
+                flex: 1,
+                sortable: true
+            }, {
+                text: '<%= t('code_second') %>',
+                dataIndex: 'code_second',
+                flex: 1,
+                sortable: true
+            }, {
+                text: '<%= t('code_third') %>',
+                dataIndex: 'code_third',
+                flex: 1,
+                sortable: true
+            }, {
+                text: '<%= t('code_four') %>',
+                dataIndex: 'code_four',
+                flex: 1,
+                sortable: true
+            }, {
+                text: '<%= t('code_five') %>',
+                dataIndex: 'code_five',
+                flex: 1,
+                sortable: true
+            }],
+            title: "<%= t('project_id') %>",
+            store : myStore,
+            rootVisible: true,
+            border: false,
+            autoScroll : true,
+            containerScroll: true,
+            bodyBorder: false,
+            frame: false
+        }); 
+//      tree_panel.expandAll();
+		function user_action_handler(type){
+			var cityform =new Ext.create('Ext.form.Panel', {
+				width: 300,
+				frame: true,
+				border: 0,
+		    	height: 500,
+		     	defaults: {
+		      	anchor: '100%',
+		       	msgTarget: 'side',
+		        	labelWidth: 60
+		        	},
+		   	items: [
+				{xtype:"hidden",name: "id"},
+		        	{
+		            xtype: 'textfield',
+		            emptyText: '<%= t('please enter project id') %>',
+		            fieldLabel: '<%= t('region') %>',
+		            name: 'region',
+						allowBlank: false
+				},{
+					xtype: 'fieldcontainer',
+					fieldLabel: '<%= t('project_id') %>',
+					layout: 'hbox',
+					defaultType: 'textfield',
+					defaults: {hideLabel: true},
+					items: [{
+						name: 'code_first',
+						fieldLabel: '<%= t('code_first') %>',
+						flex:1,
+						emptyText: '<%= t('code_first') %>',
+						allowBlank: false
+					},{xtype: 'displayfield',value: '-'},{
+						name: 'code_second',
+						fieldLabel: '<%= t('code_second') %>',
+						flex: 1,
+						emptyText: '<%= t('code_second') %>',
+						allowBlank: false
+					},{xtype: 'displayfield',value: '-'},{
+						name: 'code_third',
+						fieldLabel: '<%= t('code_third') %>',
+						flex: 1,
+						emptyText: '<%= t('code_third') %>',
+						allowBlank: false
+					},{xtype: 'displayfield',value: '-'},{
+						name: 'code_four',
+						fieldLabel: '<%= t('code_four') %>',
+						flex: 1,
+						emptyText: '<%= t('code_four') %>',
+						allowBlank: false
+					},{xtype: 'displayfield',value: '-'},{
+						name: 'code_five',
+						fieldLabel: '<%= t('code_five') %>',
+						flex: 1,
+						emptyText: '<%= t('code_five') %>',
+						allowBlank: false
+					}]
+				}],
+				buttonAlign: 'center',
+		   	buttons: [
+				{
+					text: '<%= t('save') %>',
+					handler: function(){
+						var form = this.up('form').getForm();
+							if(form.isValid()){
+								switch (type) {
+								case "add":  
+									form.submit({
+										url: 'add_cityinfo.json',
+										waitMsg: '<%= t('waiting') %>',
+										method: 'POST',
+										success: function (form, action) {
+											window.close();
+											recordstore.reload();
+											Ext.MessageBox.alert("<%= t('warn') %>","<%= t('add city success') %>");	 
+											hide_message();	  
+			                					},
+										failure: function(response) {
+											window.close();
+											recordstore.reload();
+											Ext.MessageBox.alert("<%= t('warn') %>","<%= t('city project_id repeat') %>");
+											hide_message();	
+										}  
+			           					 });	  
+									break;
+								case "edit":
+									form.submit({
+										url: 'edit_cityinfo.json',
+										waitMsg: '<%= t('waiting') %>',
+										method: 'POST',
+										success: function (form, action) {
+											window.close();
+											recordstore.reload();
+											Ext.MessageBox.alert("<%= t('warn') %>","<%= t('edit city success') %>");	
+											hide_message();	   
+			                					},
+										failure: function(response) {
+											window.close();
+											recordstore.reload();
+											Ext.MessageBox.alert("<%= t('warn') %>","<%= t('city project_id repeat') %>");
+											hide_message();			
+										}  
+			           					 });	  
+									break;
+							}
+		          			}
+		       			}
+		 		},{
+		            text: '<%= t('cancel') %>',
+		            handler: function() {
+		                window.close()
+		            			}
+		        	}]
+			});
+			var window = new Ext.Window({
+				iconCls:"window",
+				border: 0,
+				width:280,
+				height:240,
+				resizable:true,
+				layout:"fit",
+				closeAction:'destroy',
+				plain: true,
+				constrainHeader:true,
+				modal:true,
+				items:[cityform]
+			});
+			window.show();
+			if (type == "add") {
+				window.setTitle('<%= t('add project_id') %>');
+    			}  
+			else if(type == "edit"){
+				window.setTitle('<%= t('edit project_id') %>');
+			}
+		}   
+		tree_panel.on('itemcontextmenu', function(view, record, item, index, event){
+			if (record.get('parent_id')==4){
+                var menu1 = new Ext.menu.Menu({
+                    items: [{
+                        text: '<%= t('edit project_id') %>', iconCls:"edit", handler: function() {
+                            user_action_handler("edit")
+                        					}
+                    					}],
+                    listeners : {
+                        'click' : function() {
+                                   
+                        				}}
+                    			});         
+         		menu1.showAt(event.getXY());
+            	event.stopEvent();
+            		}
+      	else {
+					var menu1 = new Ext.menu.Menu({
+                    items: [{
+                        text: '<%= t('add project_id') %>', iconCls:"add", handler: function() {
+                            user_action_handler("add")
+                        					}
+                    					},{
+                        text: '<%= t('edit project_id') %>', iconCls:"edit", handler: function() {
+                            user_action_handler("edit")
+                        					}
+                    					}],
+                    listeners : {
+                        'click' : function() {
+                                   
+                        				}}
+                    			});         
+         		menu1.showAt(event.getXY());
+            	event.stopEvent();
+            		}    
+ 		},this);
+  var treeStore = Ext.create('Ext.data.TreeStore', {  
+           fields: ['id','name','sex','age','code_first','parent_id'],  
+				proxy: {
+                type: 'ajax',
+                url: 'allprojectid.json',
+                reader: 'json',
+            },
+            autoLoad: true,
+			 nodeParam : 'parent_id',
+				listeners: {
+                'expand': function(node, opt){
+                    node.expandChildren()
+                }
+            },
+           root:{                  
+                 "children":[{id:'0',name:'shu',sex:'',age:'',code_first: '1',parent_id: '1', expanded: true,  
+                             "children": [{id:'1',name:'liu.bei',sex:'male',code_first: '2',parent_id: '1',age:'50'},  
+                                          {id:'2',name:'guan.yu',sex:'male',code_first: '3',parent_id: '1',age:'49'},  
+                                          {id:'3',name:'zhang.fei',sex:'male',code_first: '4',parent_id: '1',age:'48'}]  
+                 }]   
+           }  
+     });     
+     var gridCols = [{xtype: 'treecolumn',text:'ID',dataIndex:'id'},  
+                     {text:'Name',dataIndex:'name'},  
+                     {text:'Sex',dataIndex:'sex'},  
+                     {text:'Age',dataIndex:'age'},  
+                     {text:'code_first',dataIndex:'code_first'},  
+                     {text:'parent_id',dataIndex:'parent_id'}];  
+       
+     var treeGrid = Ext.create('Ext.tree.Panel',{  
+         title: 'Three KingDom',       
+         rootVisible: false,  
+         collapsible: true,  
+         store: treeStore,  
+         columns: gridCols 
+     });  
+var projectid_border={
+    layout: "border",
+    border:false,
+    items:[{
+                region: 'center',
+                minHeight: 80,
+                items: [
+			tree_panel
+                ]
+            },{
+                region: 'south',
+                height: 100,
+                split: true,
+                collapsible: true,
+                title: 'Splitter above me',
+                minHeight: 60,
+                html: 'center south'
+            }]
+};
 var work_space = Ext.getCmp('center');
 work_space.removeAll();
-work_space.add(tabpanel);
+work_space.add(projectid_border);
 work_space.doLayout();

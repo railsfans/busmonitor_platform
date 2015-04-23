@@ -1,3 +1,7 @@
+<script>
+Ext.onReady(function() {
+
+$("#city-management a").addClass("selected");
 function hide_message() {
     Ext.defer(function() {
         Ext.MessageBox.hide();
@@ -31,7 +35,7 @@ function action_handler(type) {
 		width: 300,
 		frame: true,
   // 	title: '<%= t('cityname') %>',
-  //   	bodyPadding: '10 10 0',
+ //   bodyPadding: '10 10 0',
 		border: 0,
     	height: 500,
      	defaults: {
@@ -52,7 +56,6 @@ function action_handler(type) {
 		},
 		{xtype:"textfield",fieldLabel: '<%= t('cityname') %>',name: "cityname",allowBlank: false},   
 		{xtype:"textfield",fieldLabel: '<%= t('ip') %>',name: "ip", vtype: "ip", vtypeText:'<%= t('ip format error') %>'},
-		
 		{xtype:"fieldcontainer",fieldLabel:'<%= t('sshport range') %>',layout:'hbox',combineErrors:true,defaults:{flex:1,hideLabel:true},items:[{name:'minport',xtype:'numberfield',minValue:1,allowNegative:false,allowDecimals:false,flex:0.4,vtype:'numrange',endField:'endField',id:'startField'},{xtype:"displayfield",value:"<%= t('reach') %>",flex:0.06, margin:'0 4 0 4'},{name:'maxport',xtype:'numberfield',minValue:1,allowNegative:false,allowDecimals:false,flex:0.4,vtype:'numrange',startField:'startField',id:'endField'}]},
 		{xtype:"textfield",fieldLabel: '<%= t('rootpasswd') %>',name: "rootpasswd"},
         	],
@@ -198,7 +201,7 @@ function action_handler(type) {
 var itemsPerPage=30
 var recordstore = Ext.create('Ext.data.Store', {
     autoLoad: false,
-    fields:['ip','rootpasswd','name','project_id','online_state','online_time','offline_time','sshport_range','backup_status','backup_time','deploy_status','deploy_time'],
+    fields:['ip','rootpasswd','name','project_id','id','online_state','online_time','offline_time','sshport_range','backup_status','backup_time','deploy_status','deploy_time'],
     pageSize: itemsPerPage,  
     proxy: {
         type: 'ajax',
@@ -228,6 +231,7 @@ var task = {
 
 var runner = new Ext.util.TaskRunner();
 //runner.start(task);
+//yard_monitor_timer = setInterval(function(){recordstore.reload()},5000);
  function search(type)
 {
 	if(type=="search"){
@@ -299,6 +303,7 @@ var grid=Ext.create('Ext.grid.Panel', {
             header: '<%= t('index') %>', 
             align: 'center'
       	},
+	{ header: 'id',  dataIndex: 'id' , flex: 1, align: 'center', hidden: true },
 	{ header: '<%= t('project_id') %>',  dataIndex: 'project_id' , flex: 1, align: 'center' },
 	{ header: '<%= t('cityname') %>',  dataIndex: 'name' , flex: 1, align: 'center' },
 	{ header: '<%= t('online_state') %>',  dataIndex: 'online_state' , flex: 1, align: 'center', renderer:online_fomate },
@@ -315,7 +320,7 @@ var grid=Ext.create('Ext.grid.Panel', {
       align:"center",
    	items: [{
       	icon: '../images/link.png',
-        	tooltip: 'ip',
+         tooltip: 'ip',
 			getClass: function(value,meta,record,rowIx,colIx,store){
 				var rec = grid.getStore().getAt(rowIx);
 				weburl="http://"+rec.get('ip')+":8755";
@@ -470,12 +475,117 @@ var grid=Ext.create('Ext.grid.Panel', {
         		meta.tdAttr = 'data-qtip="' + value + '"';
          	return value.length < max ? value : value.substring(0, max) + '...';
 			}
+		},{
+			text: '<%= t('view deploy progress') %>',
+			width:75, 
+			align: 'center',
+			xtype: 'actioncolumn',
+			iconCls: 'log',
+			items: [{
+	      	icon: '../images/log.png',
+	         tooltip: '<%= t('view deploy progress') %>',
+				handler: function(grid, rowIndex, colIndex) { 
+					var rec = grid.getStore().getAt(rowIndex);
+					if(rec.get('ip')=='')
+					{
+						Ext.MessageBox.alert("<%= t('warn') %>","<%= t('please fill ip first') %>");	 
+						hide_message();	
+					}
+					else if(rec.get('deploy_status')==0)
+					{
+						Ext.MessageBox.alert("<%= t('warn') %>","<%= t('please deploy before view deploy progress') %>");	 
+						hide_message();	
+					}
+					else if(rec.get('rootpasswd')=='')
+					{
+						Ext.MessageBox.alert("<%= t('warn') %>","<%= t('please fill rootpasswd first') %>");	 
+						hide_message();	
+					}
+					else
+					{
+						Ext.Ajax.request({
+							url: 'deployprogress.json',
+							params: { id: rec.get('id')},
+							success: function(response){ 
+								var obj=Ext.decode(response.responseText);
+								var panel=Ext.create('Ext.panel.Panel', {
+	                        html:obj.log,
+	                        id: 'panelhtml',
+	                        autoScroll : true,
+	                        tbar : [{
+		                        text: '<%= t('refresh') %>',
+		                        iconCls:"refresh",
+		                        handler:function(){
+											Ext.getBody().mask("loading...");
+                            		Ext.Ajax.request({
+												url: 'deployprogress.json',
+												params: { id: rec.get('id')},
+												timeout: 180000,
+												success: function(response){
+													var obj=Ext.decode(response.responseText);
+													Ext.getBody().unmask();
+													Ext.getCmp('panelhtml').update(obj.log);
+                                                                				},
+                                  	failure: function(){
+                                                                				}
+                                                        				});
+                                                				}
+                        						}]
+								});
+                   		var w = new Ext.Window({
+	                        width  : 864,
+	                        maximizable: true,
+	                        minimizable: false,
+	                        tools: [
+                                   					 {
+		                        type: 'restore',
+		                        hidden : true,
+		                        handler: function( evt,toolEl,owner,tool ) {
+											var window = owner.up( 'window' );
+											window.expand('',false);
+											window.setWidth(winWidth);
+											window.center();
+											isMinimized = false;
+											this.hide();
+											this.nextSibling().show();
+                                        					}
+                                    					},{
+					           		type: 'minimize',
+					             	handler: function( evt,toolEl,owner,tool ){
+											var window = owner.up( 'window' );
+											window.collapse();
+											winWidth = window.getWidth();
+											window.setWidth( 150 );
+											window.alignTo( Ext.getBody(), 'bl-bl');
+											this.hide();
+											this.previousSibling().show();
+                                 isMinimized = true;
+						                    		}
+						                   	}
+						               		 ],
+	                        height : 514,
+	                        title  : '<%= t('view deploy progress') %>',
+	                        layout : 'fit',
+	                        items  : [
+	                                panel
+                                					]
+                        }).show()
+							},
+							failure: function(){
+								Ext.MessageBox.alert("<%= t('warn') %>","<%= t('view deploy progress failure') %>");	 
+								hide_message();	
+							}
+						})
+					}
+				}
+			}]
 		}] 
 	}
 	],
     width: 400,
     height: 125,
     selType: 'rowmodel',
+	 multiSelect: true,
     dockedItems: [{
         xtype: 'pagingtoolbar',
         store: recordstore,    
@@ -483,8 +593,8 @@ var grid=Ext.create('Ext.grid.Panel', {
         displayInfo: true, 
         items:[
 			{ text: '<%= t('add') %>',id:"add", iconCls:"add", handler:function(){action_handler("add")} },
-			{ text: '<%= t('edit') %>',id:"edit", iconCls:"edit", disabled: true, handler:function(){action_handler("edit")} },
-			{ text: '<%= t('delete') %>',id:"delete", iconCls:"delete", disabled: true,handler:function(){action_handler("delete")} },
+			{ text: '<%= t('edit') %>',id:"edit", iconCls:"edit", handler:function(){action_handler("edit")} },
+			{ text: '<%= t('delete') %>',id:"delete", iconCls:"delete", handler:function(){action_handler("delete")} },
     		 	{
          	xtype: 'textfield',
            	hideLabel: true,
@@ -496,10 +606,6 @@ var grid=Ext.create('Ext.grid.Panel', {
     	]    
 	}],
 });
-grid.getSelectionModel().on('selectionchange',function(selModel,selections){
-	grid.down('#edit').setDisabled(selections.length==0);
-	grid.down('#delete').setDisabled(selections.length==0);
-});
 var tabpanel=Ext.create('Ext.tab.Panel', {
     width: 400,
     height: 400,
@@ -509,3 +615,5 @@ var work_space = Ext.getCmp('center');
 work_space.removeAll();
 work_space.add(tabpanel);
 work_space.doLayout();
+})
+</script>

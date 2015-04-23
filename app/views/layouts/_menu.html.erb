@@ -4,6 +4,10 @@
                 <div><%= image_tag("citymenu.png", :class=>'menu-icon') %></div>
                 <div class="menu-text"><%= t('city management') %></div>
        <% end %>
+		<%= link_to home_projectid_path do %>
+                <div><%= image_tag("projectidmenu.png", :class=>'menu-icon') %></div>
+                <div class="menu-text"><%= t('projectid management') %></div>
+       <% end %>
 </li>
 <li id="station-management" class="left-menu">
      			<%= link_to home_station_path do %>

@@ -53,16 +53,15 @@ class ApplicationController < ActionController::Base
 #   	ip = "123.123.123.123";
 #		ip = real_ip request
     	ip = request.remote_ip
-#		p request
     	ips = ip.to_s
-		uri = 'http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=json&ip='+ips
+		uri = 'http://ip.taobao.com/service/getIpInfo.php?ip='+ips
 		response = nil
 		open(uri) do |http|
   			response = http.read
 		end
 		@res = JSON::parse(response)
-		if @res["ret"]==1
-			ipLocation = @res["country"] +", "+@res["city"]
+		if @res["data"]["country_id"]!="IANA"
+			ipLocation = @res["data"]["country"] +", "+@res["data"]["city"]
 		else
 			ipLocation="unknow region"
 		end

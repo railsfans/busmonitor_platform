@@ -1,5 +1,5 @@
 require 'sidekiq/web'
-BusmonitorPlatform::Application.routes.draw do
+BusmonitorPlatform::Application.routes.draw do |map|
 	mount Sidekiq::Web=>'/sidekiq'
 	resource  :session
 	match '/login' => "sessions#new", :as => "login" 
@@ -16,6 +16,9 @@ BusmonitorPlatform::Application.routes.draw do
 	match 'home/delete_cityinfo'=>"home#edit_cityinfo"
 	match 'home/backup'=>"home#backup"
 	match 'home/deploy'=>"home#deploy"
+	match 'home/deployprogress'=>"home#deployprogress"
+	match 'home/projectid'=>"home#projectid"
+	match 'home/allprojectid'=>"home#allprojectid"
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -71,6 +74,6 @@ BusmonitorPlatform::Application.routes.draw do
 
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
-   match ':controller(/:action(/:id(.:format)))'
+   match ':controller(/:action(/:id(.:format)))', :via => :all
 	match '*a', :to=>'sessions#routeerror'
 end

@@ -22,13 +22,19 @@ class HardWorker
 					end
 				end
 			when 'deploy'
-				puts 'deploy cmd'
+				puts 'deploy cmd here'
 				createcmd="cd /opt/tmp/cap; cp Capfile_common Capfile"
 				system(createcmd)
 				passwd=City.find(string).rootpasswd
 				ip=City.find(string).ip
-				initcmd="echo \"set :password, '"+passwd+"'\">>/opt/tmp/cap/Capfile;echo \"set :remoteServer, '"+ip+"'\">>/opt/tmp/cap/Capfile"
+				project_id=City.find(string).project_id
+				puts 'deploy cmds'
+				initcmd="echo \"set 'project_id', '"+project_id+"'\">>/opt/tmp/cap/Capfile;"+"echo \"set :password, '"+passwd+"'\">>/opt/tmp/cap/Capfile;echo \"role :remoteServer, '"+ip+"'\">>/opt/tmp/cap/Capfile"
 				status=system(initcmd)
+				puts status
+				puts initcmd
+				deploycmd="cd /opt/tmp/cap; cap se:install"
+				status=system(deploycmd)
 				if status
 					City.find(string).update_attributes(:deploy_status=>2, :deploy_time=>Time.now.to_s.split('+')[0])
 				else
