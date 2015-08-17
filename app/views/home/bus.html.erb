@@ -5,7 +5,7 @@ Ext.getCmp('left').items.items[2].expand();
 var itemsPerPage=30
 var recordstore = Ext.create('Ext.data.Store', {
     autoLoad: false,
-    fields:['cityname','update_time','update_count','no_update_count','never_online_count','pass_48h_never_online_count','pass_24h_update_rate','pass_48h_update_rate','total_count'],
+    fields:['cityname','update_time','update_count','no_update_count','never_online_count','pass_48h_never_online_count','pass_24h_update_rate','pass_48h_update_rate','total_count','update_rate'],
     pageSize: itemsPerPage,  
     proxy: {
         type: 'ajax',
@@ -71,6 +71,7 @@ var grid=Ext.create('Ext.grid.Panel', {
 	{ header: '<%= t('total_count') %>',  dataIndex: 'total_count' , flex: 1, align: 'center' },
 	{ header: '<%= t('update_count') %>',  dataIndex: 'update_count' , flex: 1, align: 'center' },
 	{ header: '<%= t('no_update_count') %>',  dataIndex: 'no_update_count' , flex: 1, align: 'center' },
+	{ header: '<%= t('update_rate') %>',  dataIndex: 'update_rate' , flex: 1, align: 'center' },
 	{ header: '<%= t('pass_48h_never_online_count') %>',  dataIndex: 'pass_48h_never_online_count' , flex: 1, align: 'center' },
 	{ header: '<%= t('never_online_count') %>',  dataIndex: 'never_online_count' , flex: 1, align: 'center' },
 	{ header: '<%= t('update_time') %>',  dataIndex: 'update_time' , flex: 1, align: 'center' },

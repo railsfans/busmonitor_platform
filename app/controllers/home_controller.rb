@@ -129,13 +129,16 @@ before_filter :authenticate
       }
 		end
 	end
+	def add_percent str
+		return str.to_s+"%"
+	end
 	def bus
 		i=0
 		respond_to do |format|
 			format.js
 			format.html
 			format.json { render :json=>{:totalCount=>Bus.all.count<=30 ? Bus.all.count : 30, :gridData=> Bus.all.collect{ |list| i=i+1
-            {:id=>list.id, :cityname=>City.find_by_project_id(list.project_id).try(:name), :update_time=>list.updatetime,  :update_count=>list.updatecount, :total_count=>list.totalcount, :no_update_count=>(list.totalcount.to_i-list.updatecount.to_i), :never_online_count=>list.never_online_count, :pass_48h_never_online_count=>list.pass_48h_never_online_count, :pass_24h_update_rate=>list.pass_24h_update_rate, :pass_48h_update_rate=>list.pass_48h_update_rate}
+            {:id=>list.id, :cityname=>City.find_by_project_id(list.project_id).try(:name), :update_time=>list.updatetime, :update_rate=>add_percent((list.updatecount.to_f/list.totalcount.to_i).round(2)*100), :update_count=>list.updatecount, :total_count=>list.totalcount, :no_update_count=>(list.totalcount.to_i-list.updatecount.to_i), :never_online_count=>list.never_online_count, :pass_48h_never_online_count=>list.pass_48h_never_online_count, :pass_24h_update_rate=>list.pass_24h_update_rate, :pass_48h_update_rate=>list.pass_48h_update_rate}
           }
         }
       }
